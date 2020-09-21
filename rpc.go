@@ -9,7 +9,6 @@ import (
 	"net/http"
 )
 
-// rpcStruct ...
 type rpcStruct struct {
 	Username string
 	Password string
@@ -17,7 +16,7 @@ type rpcStruct struct {
 	Port     int
 }
 
-// RPC ...
+// RPC interface
 type RPC interface {
 	Call(string, ...interface{}) ([]byte, error)
 
@@ -37,11 +36,16 @@ type RPC interface {
 
 	CombineRawTransaction(txs ...string) (string, error)
 	CreateRawTransaction(inputs *Inputs, outputs *Outputs) (string, error)
+	DecodeRawTransaction(signedTx string) (*DecodedTx, error)
 	SignRawTransaction(rawTx string, privateKeys []string) (string, error)
 	SendRawTransaction(signedTx string, allowHighFees bool) (string, error)
+
+	GetAddressesByLabels() (map[string]string, error)
+	GetWalletBalance(minconf int) (float64, error)
+	GetBalance(address string) (float64, error)
 }
 
-// NewRPC RPC Client
+// NewRPC creates new RPC interface
 func NewRPC(host string, port int, username string, password string) RPC {
 	var rpc RPC = &rpcStruct{
 		Username: username,
@@ -52,7 +56,7 @@ func NewRPC(host string, port int, username string, password string) RPC {
 	return rpc
 }
 
-// Call ...
+// Call specified RPC method
 func (rpc *rpcStruct) Call(method string, params ...interface{}) ([]byte, error) {
 	u := fmt.Sprintf("http://%s:%s@%s:%d", rpc.Username, rpc.Password, rpc.Host, rpc.Port)
 	reqBody, err := json.Marshal(map[string]interface{}{

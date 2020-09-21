@@ -79,3 +79,16 @@ func (rpc *rpcStruct) CombineRawTransaction(txs ...string) (string, error) {
 	}
 	return tx, nil
 }
+
+// DecodeRawTransaction returns a structure representing the serialized, hex-encoded transaction
+func (rpc *rpcStruct) DecodeRawTransaction(signedTx string) (*DecodedTx, error) {
+	res, err := rpc.Call("decoderawtransaction", signedTx)
+	if err != nil {
+		return nil, err
+	}
+	decodedTx := new(DecodedTx)
+	if err := json.Unmarshal(res, decodedTx); err != nil {
+		return nil, err
+	}
+	return decodedTx, nil
+}
