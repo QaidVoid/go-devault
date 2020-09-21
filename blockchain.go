@@ -7,12 +7,16 @@ import (
 )
 
 // GetBestBlockHash returns the hash of the best (tip) block in the longest blockchain
-func (rpc *rpcStruct) GetBestBlockHash() ([]byte, error) {
+func (rpc *rpcStruct) GetBestBlockHash() (string, error) {
 	res, err := rpc.Call("getbestblockhash")
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	return res, nil
+	bh, err := strconv.Unquote(string(res))
+	if err != nil {
+		return "", err
+	}
+	return bh, nil
 }
 
 // GetBlock returns an Object with information about block 'hash'
@@ -53,12 +57,16 @@ func (rpc *rpcStruct) GetBlockCount() (int64, error) {
 }
 
 // GetBlockHash returns hash of block in best-block-chain at height provided
-func (rpc *rpcStruct) GetBlockHash(height int) ([]byte, error) {
-	res, err := rpc.Call("getblockcount", height)
+func (rpc *rpcStruct) GetBlockHash(height int) (string, error) {
+	res, err := rpc.Call("getblockhash", height)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	return res, nil
+	bh, err := strconv.Unquote(string(res))
+	if err != nil {
+		return "", err
+	}
+	return bh, nil
 }
 
 // GetBlockHeader returns an Object with information about blockheader 'hash'

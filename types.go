@@ -121,3 +121,26 @@ type MemPoolInfo struct {
 	MemPoolMinFee float64 `json:"mempoolminfee"`
 	MinRelayTxFee float64 `json:"minrelaytxfee"`
 }
+
+// Inputs ...
+type Inputs []Input
+
+// Input ...
+type Input struct {
+	TXID     string  `json:"txid"`
+	VOut     int     `json:"vout"`
+	Sequence float64 `json:"sequence,omitempty"`
+}
+
+// Outputs ...
+type Outputs []map[string]float64
+
+// SignedRawTx ...
+type SignedRawTx struct {
+	Hex      string `json:"hex,omitempty"`
+	Complete bool   `json:"complete,omitempty"`
+	Errors   []struct {
+		Error string `json:"error,omitempty"`
+		TXID  string `json:"txid,omitempty"`
+	} `json:"errors,omitempty"`
+}
