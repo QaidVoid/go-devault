@@ -18,9 +18,11 @@ type rpcStruct struct {
 
 // RPC ...
 type RPC interface {
-	Call(string, []string) ([]byte, error)
-	GetInfo() (*Info, error)
-	GetBestBlockHash() (*BlockHash, error)
+	Call(string, ...interface{}) ([]byte, error)
+	GetInfo() (*RPCInfo, error)
+	GetBestBlockHash() (string, error)
+	GetBlock(string) (*Block, error)
+	GetBlockChainInfo() (*BlockChainInfo, error)
 }
 
 // Client ...
@@ -38,7 +40,7 @@ func New(host string, port int, username string, password string) RPC {
 }
 
 // Call ...
-func (rpc *rpcStruct) Call(method string, params []string) ([]byte, error) {
+func (rpc *rpcStruct) Call(method string, params ...interface{}) ([]byte, error) {
 	u := fmt.Sprintf("http://%s:%s@%s:%d", rpc.Username, rpc.Password, rpc.Host, rpc.Port)
 	reqBody, err := json.Marshal(map[string]interface{}{
 		"jsonrpc": "1.0",
@@ -60,16 +62,17 @@ func (rpc *rpcStruct) Call(method string, params []string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return body, nil
 }
 
 // GetInfo ...
-func (rpc *rpcStruct) GetInfo() (*Info, error) {
+func (rpc *rpcStruct) GetInfo() (*RPCInfo, error) {
 	res, err := rpc.Call("getinfo", nil)
 	if err != nil {
 		return nil, err
 	}
-	info := new(Info)
+	info := new(RPCInfo)
 	json.Unmarshal(res, info)
 	return info, err
 }
