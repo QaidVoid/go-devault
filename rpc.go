@@ -19,17 +19,27 @@ type rpcStruct struct {
 // RPC ...
 type RPC interface {
 	Call(string, ...interface{}) ([]byte, error)
-	GetInfo() (*RPCInfo, error)
-	GetBestBlockHash() (string, error)
-	GetBlock(string) (*Block, error)
-	GetBlockChainInfo() (*BlockChainInfo, error)
+
+	GetBestBlockHash() ([]byte, error)
+	GetBlockChainInfo() (*BlockChain, error)
+	GetBlockCount() (int64, error)
+
+	GetBlockHash(height int) ([]byte, error)
+	GetBlock(hash string) (*Block, error)
+	GetBlockHeader(blockhash string) (*BlockHeader, error)
+	GetBlockStats(hashOrHeight interface{}) (*BlockStats, error)
+
+	GetChainTips() (*ChainTips, error)
+	GetChainTxStats(args ...interface{}) (*ChainTxStats, error)
+	GetDifficulty() (float64, error)
+	GetMemPoolInfo() (*MemPoolInfo, error)
 }
 
 // Client ...
 type Client string
 
-// New RPC Client
-func New(host string, port int, username string, password string) RPC {
+// NewRPC RPC Client
+func NewRPC(host string, port int, username string, password string) RPC {
 	var rpc RPC = &rpcStruct{
 		Username: username,
 		Password: password,
@@ -63,16 +73,19 @@ func (rpc *rpcStruct) Call(method string, params ...interface{}) ([]byte, error)
 		return nil, err
 	}
 
-	return body, nil
-}
+	resp := new(Response)
 
-// GetInfo ...
-func (rpc *rpcStruct) GetInfo() (*RPCInfo, error) {
-	res, err := rpc.Call("getinfo", nil)
+	if err := json.Unmarshal(body, resp); err != nil {
+		return nil, err
+	}
+
+	if resp.Error != nil {
+		return nil, err
+	}
+
+	m, err := json.Marshal(resp.Result)
 	if err != nil {
 		return nil, err
 	}
-	info := new(RPCInfo)
-	json.Unmarshal(res, info)
-	return info, err
+	return m, nil
 }
