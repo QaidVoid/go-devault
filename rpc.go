@@ -9,22 +9,23 @@ import (
 	"net/http"
 )
 
-type rpcStruct struct {
+// RPC connection details
+type RPC struct {
 	Username string
 	Password string
 	Host     string
 	Port     int
 }
 
-// RPC interface
-type RPC interface {
+// RPCClient interface
+type RPCClient interface {
 	Call(string, ...interface{}) ([]byte, error)
 
 	GetBestBlockHash() (string, error)
 	GetBlockChainInfo() (*BlockChain, error)
 	GetBlockCount() (int64, error)
 
-	GetBlockHash(height int) (string, error)
+	GetBlockHash(height int64) (string, error)
 	GetBlock(hash string) (*Block, error)
 	GetBlockHeader(blockhash string) (*BlockHeader, error)
 	GetBlockStats(hashOrHeight interface{}) (*BlockStats, error)
@@ -43,11 +44,17 @@ type RPC interface {
 	GetAddressesByLabels() (map[string]string, error)
 	GetWalletBalance(minconf int) (float64, error)
 	GetBalance(address string) (float64, error)
+	SendToAddress(toAddress string, amount float64) (string, error)
+	UnlockWallet(passphrase string, time int64) error
+	GetTransaction(txid string) (*Transaction, error)
+
+	SubscribeNewBlock(c chan int64)
+	SubscribeNewTransaction(c chan string)
 }
 
 // NewRPC creates new RPC interface
-func NewRPC(host string, port int, username string, password string) RPC {
-	var rpc RPC = &rpcStruct{
+func NewRPC(host string, port int, username string, password string) RPCClient {
+	var rpc RPCClient = &RPC{
 		Username: username,
 		Password: password,
 		Host:     host,
@@ -57,7 +64,7 @@ func NewRPC(host string, port int, username string, password string) RPC {
 }
 
 // Call specified RPC method
-func (rpc *rpcStruct) Call(method string, params ...interface{}) ([]byte, error) {
+func (rpc *RPC) Call(method string, params ...interface{}) ([]byte, error) {
 	u := fmt.Sprintf("http://%s:%s@%s:%d", rpc.Username, rpc.Password, rpc.Host, rpc.Port)
 	reqBody, err := json.Marshal(map[string]interface{}{
 		"jsonrpc": "1.0",
