@@ -5,16 +5,8 @@ import (
 	"strconv"
 )
 
-// AbandonTransaction Mark in-wallet transaction <txid> as abandoned This will mark this transaction and all its in-wallet descendants as abandoned which will allow for their inputs to be respent. It can be used to replace “stuck” or evicted transactions.
-//
-// It only works on transactions which are not included in a block and are not currently in the mempool.
-//
-// It has no effect on transactions which are already abandoned.
-func (rpc *rpcStruct) AbandonTransaction(txid string) {
-	// TODO
-}
-
-func (rpc *rpcStruct) GetAddressesByLabels() (map[string]string, error) {
+// GetAddressesByLabels returns addresses from wallet as key-value pair of label and address
+func (rpc *RPC) GetAddressesByLabels() (map[string]string, error) {
 	res, err := rpc.Call("getaddressesbylabels")
 	if err != nil {
 		return nil, err
@@ -27,7 +19,7 @@ func (rpc *rpcStruct) GetAddressesByLabels() (map[string]string, error) {
 // GetWalletBalance returns the total available balance
 //
 // The available balance is what the wallet considers currently spendable, and is thus affected by options which limit spendability such as -spendzeroconfchange.
-func (rpc *rpcStruct) GetWalletBalance(minconf int) (float64, error) {
+func (rpc *RPC) GetWalletBalance(minconf int) (float64, error) {
 	res, err := rpc.Call("getbalance", "*", minconf)
 	if err != nil {
 		return 0, err
@@ -40,7 +32,7 @@ func (rpc *rpcStruct) GetWalletBalance(minconf int) (float64, error) {
 }
 
 // GetBalance returns the available balance on specified address
-func (rpc *rpcStruct) GetBalance(address string) (float64, error) {
+func (rpc *RPC) GetBalance(address string) (float64, error) {
 	res, err := rpc.Call("getaddressbalance", address)
 	if err != nil {
 		return 0, err
@@ -54,4 +46,41 @@ func (rpc *rpcStruct) GetBalance(address string) (float64, error) {
 		return 0, err
 	}
 	return bal.Balance, nil
+}
+
+// SendToAddress sends specified amount to the provided address
+//
+// Wallet must be unlocked using 'UnlockWallet' method before sending transaction
+func (rpc *RPC) SendToAddress(toAddress string, amount float64) (string, error) {
+	res, err := rpc.Call("sendtoaddress", toAddress, amount)
+	if err != nil {
+		return "", err
+	}
+	tx, err := strconv.Unquote(string(res))
+	if err != nil {
+		return "", err
+	}
+	return tx, nil
+}
+
+// UnlockWallet unlocks wallet for certain period of time
+func (rpc *RPC) UnlockWallet(passphrase string, time int64) error {
+	_, err := rpc.Call("walletpassphrase", passphrase, time)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// GetTransaction returns detailed information about in-wallet transaction <txid>
+func (rpc *RPC) GetTransaction(txid string) (*Transaction, error) {
+	res, err := rpc.Call("gettransaction", txid)
+	if err != nil {
+		return nil, err
+	}
+	tx := new(Transaction)
+	if err := json.Unmarshal(res, tx); err != nil {
+		return nil, err
+	}
+	return tx, nil
 }
