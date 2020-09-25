@@ -175,3 +175,29 @@ type DecodedTx struct {
 		} `json:"scriptPubKey,omitempty"`
 	} `json:"vout,omitempty"`
 }
+
+// Transaction type holds transaction details
+type Transaction struct {
+	Amount           float64 `json:"amount"`
+	Fee              float64 `json:"fee"`
+	Confirmations    int     `json:"confirmations"`
+	Generated        bool    `json:"generated,omitempty"`
+	BlockHash        string  `json:"blockhash"`
+	BlockIndex       int     `json:"blockindex"`
+	BlockTime        int     `json:"blocktime"`
+	TXID             string  `json:"txid"`
+	Time             int     `json:"time"`
+	TimeReceived     int     `json:"timereceived"`
+	Bip125Replacable string  `json:"bip125-replacable,omitempty"`
+	Details          []struct {
+		Account   string  `json:"account,omitempty"`
+		Address   string  `json:"address"`
+		Category  string  `json:"category"`
+		Label     string  `json:"label,omitempty"`
+		Amount    float64 `json:"amount"`
+		Fee       float64 `json:"fee"`
+		Abandoned bool    `json:"abandoned"`
+		VOut      int     `json:"vout"`
+	} `json:"details"`
+	Hex string `json:"hex"`
+}
