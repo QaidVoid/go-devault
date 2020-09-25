@@ -15,7 +15,7 @@ import (
 // Returns hex-encoded raw transaction.
 //
 // Note that the transaction's inputs are not signed, and it is not stored in the wallet or transmitted to the network
-func (rpc *rpcStruct) CreateRawTransaction(inputs *Inputs, outputs *Outputs) (string, error) {
+func (rpc *RPC) CreateRawTransaction(inputs *Inputs, outputs *Outputs) (string, error) {
 	res, err := rpc.Call("createrawtransaction", inputs, outputs)
 	if err != nil {
 		return "", err
@@ -30,7 +30,7 @@ func (rpc *rpcStruct) CreateRawTransaction(inputs *Inputs, outputs *Outputs) (st
 // SignRawTransaction signs inputs for raw transaction (serialized, hex-encoded)
 //
 // Private keys is an array of Bech32 encoded private keys
-func (rpc *rpcStruct) SignRawTransaction(rawTx string, privateKeys []string) (string, error) {
+func (rpc *RPC) SignRawTransaction(rawTx string, privateKeys []string) (string, error) {
 	res, err := rpc.Call("signrawtransactionwithkey", rawTx, privateKeys)
 	if err != nil {
 		return "", err
@@ -53,7 +53,7 @@ func (rpc *rpcStruct) SignRawTransaction(rawTx string, privateKeys []string) (st
 // SendRawTransaction submits raw transaction (serialized, hex-encoded) to local node and network
 //
 // Returns transaction hash
-func (rpc *rpcStruct) SendRawTransaction(signedTx string, allowHighFees bool) (string, error) {
+func (rpc *RPC) SendRawTransaction(signedTx string, allowHighFees bool) (string, error) {
 	res, err := rpc.Call("sendrawtransaction", signedTx, allowHighFees)
 	if err != nil {
 		return "", err
@@ -68,7 +68,7 @@ func (rpc *rpcStruct) SendRawTransaction(signedTx string, allowHighFees bool) (s
 // CombineRawTransaction combines multiple partially signed transactions into one transaction.
 //
 // The combined transaction may be another partially signed transaction or a fully signed transaction.
-func (rpc *rpcStruct) CombineRawTransaction(txs ...string) (string, error) {
+func (rpc *RPC) CombineRawTransaction(txs ...string) (string, error) {
 	res, err := rpc.Call("combinerawtransaction", txs)
 	if err != nil {
 		return "", err
@@ -81,7 +81,7 @@ func (rpc *rpcStruct) CombineRawTransaction(txs ...string) (string, error) {
 }
 
 // DecodeRawTransaction returns a structure representing the serialized, hex-encoded transaction
-func (rpc *rpcStruct) DecodeRawTransaction(signedTx string) (*DecodedTx, error) {
+func (rpc *RPC) DecodeRawTransaction(signedTx string) (*DecodedTx, error) {
 	res, err := rpc.Call("decoderawtransaction", signedTx)
 	if err != nil {
 		return nil, err
