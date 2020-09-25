@@ -7,7 +7,7 @@ import (
 )
 
 // GetBestBlockHash returns the hash of the best (tip) block in the longest blockchain
-func (rpc *rpcStruct) GetBestBlockHash() (string, error) {
+func (rpc *RPC) GetBestBlockHash() (string, error) {
 	res, err := rpc.Call("getbestblockhash")
 	if err != nil {
 		return "", err
@@ -20,7 +20,7 @@ func (rpc *rpcStruct) GetBestBlockHash() (string, error) {
 }
 
 // GetBlock returns an Object with information about block 'hash'
-func (rpc *rpcStruct) GetBlock(hash string) (*Block, error) {
+func (rpc *RPC) GetBlock(hash string) (*Block, error) {
 	res, err := rpc.Call("getblock", hash)
 	if err != nil {
 		return nil, err
@@ -31,7 +31,7 @@ func (rpc *rpcStruct) GetBlock(hash string) (*Block, error) {
 }
 
 // GetBlockChainInfo returns an object containing various state info regarding blockchain processing
-func (rpc *rpcStruct) GetBlockChainInfo() (*BlockChain, error) {
+func (rpc *RPC) GetBlockChainInfo() (*BlockChain, error) {
 	res, err := rpc.Call("getblockchaininfo")
 	if err != nil {
 		return nil, err
@@ -44,7 +44,7 @@ func (rpc *rpcStruct) GetBlockChainInfo() (*BlockChain, error) {
 }
 
 // GetBlockCount returns the number of blocks in the longest blockchain
-func (rpc *rpcStruct) GetBlockCount() (int64, error) {
+func (rpc *RPC) GetBlockCount() (int64, error) {
 	res, err := rpc.Call("getblockcount")
 	if err != nil {
 		return 0, err
@@ -57,7 +57,7 @@ func (rpc *rpcStruct) GetBlockCount() (int64, error) {
 }
 
 // GetBlockHash returns hash of block in best-block-chain at height provided
-func (rpc *rpcStruct) GetBlockHash(height int) (string, error) {
+func (rpc *RPC) GetBlockHash(height int64) (string, error) {
 	res, err := rpc.Call("getblockhash", height)
 	if err != nil {
 		return "", err
@@ -70,7 +70,7 @@ func (rpc *rpcStruct) GetBlockHash(height int) (string, error) {
 }
 
 // GetBlockHeader returns an Object with information about blockheader 'hash'
-func (rpc *rpcStruct) GetBlockHeader(blockhash string) (*BlockHeader, error) {
+func (rpc *RPC) GetBlockHeader(blockhash string) (*BlockHeader, error) {
 	res, err := rpc.Call("getblockheader", blockhash)
 	if err != nil {
 		return nil, err
@@ -82,14 +82,14 @@ func (rpc *rpcStruct) GetBlockHeader(blockhash string) (*BlockHeader, error) {
 	return blockheader, nil
 }
 
-// GetBlockStats
+// GetBlockStats .
 //
 // Compute per block statistics for a given window. All amounts are in satoshis.
 //
 // It won’t work for some heights with pruning.
 //
 // It won’t work without -txindex for utxo_size_inc, *fee or *feerate stats.
-func (rpc *rpcStruct) GetBlockStats(hashOrHeight interface{}) (*BlockStats, error) {
+func (rpc *RPC) GetBlockStats(hashOrHeight interface{}) (*BlockStats, error) {
 	switch hashOrHeight.(type) {
 	case int, string:
 		res, err := rpc.Call("getblockstats", hashOrHeight)
@@ -107,7 +107,7 @@ func (rpc *rpcStruct) GetBlockStats(hashOrHeight interface{}) (*BlockStats, erro
 }
 
 // GetChainTips return information about all known tips in the block tree, including the main chain as well as orphaned branches
-func (rpc *rpcStruct) GetChainTips() (*ChainTips, error) {
+func (rpc *RPC) GetChainTips() (*ChainTips, error) {
 	res, err := rpc.Call("getchaintips")
 	if err != nil {
 		return nil, err
@@ -132,7 +132,7 @@ func (rpc *rpcStruct) GetChainTips() (*ChainTips, error) {
 // Type: string, optional, default=chain tip
 //
 // The hash of the block that ends the window.
-func (rpc *rpcStruct) GetChainTxStats(args ...interface{}) (*ChainTxStats, error) {
+func (rpc *RPC) GetChainTxStats(args ...interface{}) (*ChainTxStats, error) {
 	res, err := rpc.Call("getchaintxstats", args...)
 	if err != nil {
 		return nil, err
@@ -145,7 +145,7 @@ func (rpc *rpcStruct) GetChainTxStats(args ...interface{}) (*ChainTxStats, error
 }
 
 // GetDifficulty returns the proof-of-work difficulty as a multiple of the minimum difficulty
-func (rpc *rpcStruct) GetDifficulty() (float64, error) {
+func (rpc *RPC) GetDifficulty() (float64, error) {
 	res, err := rpc.Call("getdifficulty")
 	if err != nil {
 		return 0, err
@@ -158,7 +158,7 @@ func (rpc *rpcStruct) GetDifficulty() (float64, error) {
 }
 
 // GetMemPoolInfo returns details on the active state of the TX memory pool
-func (rpc *rpcStruct) GetMemPoolInfo() (*MemPoolInfo, error) {
+func (rpc *RPC) GetMemPoolInfo() (*MemPoolInfo, error) {
 	res, err := rpc.Call("getmempoolinfo")
 	if err != nil {
 		return nil, err
