@@ -3,8 +3,11 @@ package devault
 // Response structure for RPC call response
 type Response struct {
 	Result interface{} `json:"result,omitempty"`
-	Error  interface{} `json:"error,omitempty"`
-	ID     interface{} `json:"id,omitempty"`
+	Error  struct {
+		Code    int    `json:"code,omitempty"`
+		Message string `json:"message,omitempty"`
+	} `json:"error,omitempty"`
+	ID interface{} `json:"id,omitempty"`
 }
 
 // Block stores for blocks information
@@ -183,8 +186,8 @@ type Transaction struct {
 	Confirmations    int     `json:"confirmations"`
 	Generated        bool    `json:"generated,omitempty"`
 	BlockHash        string  `json:"blockhash"`
-	BlockIndex       int     `json:"blockindex"`
-	BlockTime        int     `json:"blocktime"`
+	BlockIndex       int64   `json:"blockindex"`
+	BlockTime        int64   `json:"blocktime"`
 	TXID             string  `json:"txid"`
 	Time             int     `json:"time"`
 	TimeReceived     int     `json:"timereceived"`
