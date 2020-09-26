@@ -36,8 +36,14 @@ func (rpc *RPC) SubscribeNewTransaction(c chan string) {
 		rpc.SubscribeNewBlock(newblock)
 
 		for height := range newblock {
-			hash, _ := rpc.GetBlockHash(height)
-			block, _ := rpc.GetBlock(hash)
+			hash, err := rpc.GetBlockHash(height)
+			if err != nil {
+				log.Fatal(err)
+			}
+			block, err := rpc.GetBlock(hash)
+			if err != nil {
+				log.Fatal(err)
+			}
 
 			for _, tx := range block.Transactions {
 				c <- tx
