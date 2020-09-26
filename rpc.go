@@ -47,6 +47,7 @@ type RPCClient interface {
 	SendToAddress(toAddress string, amount float64) (string, error)
 	UnlockWallet(passphrase string, time int64) error
 	GetTransaction(txid string) (*Transaction, error)
+	GetNewAddress(label *string) (string, error)
 
 	SubscribeNewBlock(c chan int64)
 	SubscribeNewTransaction(c chan string)
@@ -93,8 +94,8 @@ func (rpc *RPC) Call(method string, params ...interface{}) ([]byte, error) {
 		return nil, errors.New("Invalid Response Received")
 	}
 
-	if resp.Error != nil {
-		return nil, err
+	if resp.Error.Code != 0 {
+		return nil, errors.New(resp.Error.Message)
 	}
 
 	m, err := json.Marshal(resp.Result)
