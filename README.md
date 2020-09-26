@@ -19,11 +19,11 @@ func main() {
 	testnet := devault.NewRPC("127.0.0.1", 13339, "user", "pass")
 	mainnet := devault.NewRPC("127.0.0.1", 3339, "user", "pass")
 
-  // Get new address from wallet
+  	// Get new address from wallet
 	addr, _ := testnet.GetNewAddress(nil)
 	log.Printf("New testnet address: %s", addr)
 
-  // Get balance from wallet with atleast 6 confs
+  	// Get balance from wallet with atleast 6 confs
 	balance, _ := testnet.GetWalletBalance(6)
 	log.Printf("Wallet Balance: %.3f", balance)
 
@@ -55,5 +55,12 @@ func main() {
 	tx, _ = mainnet.SignRawTransaction(raw, keys)
 	mainnet.SendRawTransaction(tx, false)
 	log.Fatal("Transaction success!")
+	
+	sub := make(chan int64)
+	mainnet.SubscribeNewBlock(sub)
+	
+	for block := range sub {
+		log.Printf("Block %d mined.", block)
+	}
 }
 ```
