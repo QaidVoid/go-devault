@@ -84,3 +84,18 @@ func (rpc *RPC) GetTransaction(txid string) (*Transaction, error) {
 	}
 	return tx, nil
 }
+
+// GetNewAddress returns a new Devault address for receiving payments
+// If 'label' is specified, it is added to the address book
+// so payments received with the address will be associated with 'label'.
+func (rpc *RPC) GetNewAddress(label *string) (string, error) {
+	res, err := rpc.Call("getnewaddress", label)
+	if err != nil {
+		return "", err
+	}
+	tx, err := strconv.Unquote(string(res))
+	if err != nil {
+		return "", err
+	}
+	return tx, nil
+}
